@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Requests
+ * Class RequestForm
  * @package App\Models
  *
  * @property int $id
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property DateTime $updated_at
  * @property DateTime $deleted_at
  */
-class Requests extends Model
+class RequestForm extends Model
 {
     use HasFactory, SoftDeletes;
 

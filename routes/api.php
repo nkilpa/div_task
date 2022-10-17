@@ -18,6 +18,6 @@ Route::prefix('requests')->group(function () {
         Route::get('/index', [RequestsController::class, 'index']);
         Route::get('/show/{id}', [RequestsController::class, 'show']);
         Route::post('/create', [RequestsController::class, 'create']);
-        Route::put('/update/{id}', [RequestsController::class, 'update']);
+        Route::post('/update/{id}', [RequestsController::class, 'update']);
         Route::delete('/delete/{id}', [RequestsController::class, 'delete']);
     });

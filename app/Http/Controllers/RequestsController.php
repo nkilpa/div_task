@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Repositories\RequestsRepository;
-use App\Models\Requests;
+use App\Http\Repositories\RequestFromRepository;
+use App\Models\RequestForm as RequestForm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RequestsController extends Controller
 {
-    private RequestsRepository $requestsRepository;
+    private RequestFromRepository $requestFormRepository;
 
     public function __construct()
     {
-        $this->requestsRepository = new RequestsRepository();
+        $this->requestFormRepository = new RequestFromRepository();
     }
 
     /**
@@ -24,7 +24,7 @@ class RequestsController extends Controller
      */
     public function index(): JsonResponse
     {
-        $result = $this->requestsRepository->getAll();
+        $result = $this->requestFormRepository->getAll();
 
         return response()->json([
             'status' => 'ok',
@@ -37,6 +37,7 @@ class RequestsController extends Controller
      *
      * @param Request $request
      * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function create(Request $request): JsonResponse
     {
@@ -56,23 +57,23 @@ class RequestsController extends Controller
 
         $data = $validator->validated();
 
-        $requests = new Requests();
-        $requests->name = $data['name'];
-        $requests->email = $data['email'];
-        $requests->message = $data['message'];
-        $requests->status = 'Active';
+        $requestForm = new RequestForm();
+        $requestForm->name = $data['name'];
+        $requestForm->email = $data['email'];
+        $requestForm->message = $data['message'];
+        $requestForm->status = 'Active';
 
-        if ($requests->save())
+        if ($requestForm->save())
         {
             return response()->json([
                 'status' => 'ok',
-                'id' => $requests->id
+                'id' => $requestForm->id
             ]);
         }
 
         return response()->json([
             'status' => 'error',
-            'message' => 'Ошибка создания запроса'
+            'message' => 'Ошибка создания заявки'
         ]);
     }
 
@@ -84,7 +85,7 @@ class RequestsController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->requestsRepository->getById($id);
+        $result = $this->requestFormRepository->getById($id);
 
         return response()->json([
             'status' => 'ok',
@@ -95,22 +96,68 @@ class RequestsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Requests $requests
+     * @param int $id
+     * @param Request $request
      * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Requests $requests): JsonResponse
+    public function update(int $id, Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'comment' => 'required'
+        ]);
 
+        if ($validator->fails())
+        {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        $data = $validator->validated();
+
+        $requestForm = $this->requestFormRepository->getById($id);
+
+        if ($requestForm->status == 'Resolved')
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Заявка уже обработана'
+            ]);
+        }
+
+        $requestForm->comment = $data['comment'];
+        $requestForm->status = 'Resolved';
+
+        if ($requestForm->save())
+        {
+            return response()->json([
+                'status' => 'ok',
+                'id' => $requestForm->id
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Ошибка изменения заявки'
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Requests  $requests
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function delete(Requests $requests)
+    public function delete(int $id): JsonResponse
     {
-        //
+        $requestForm = $this->requestFormRepository->getById($id);
+
+        $requestForm->delete();
+
+        return response()->json([
+            'status' => 'ok'
+        ]);
     }
 }
