@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Repositories\RequestRepository;
+use App\Dto\RequestFilterDto;
 use App\Mail\RequestMail;
 use App\Models\Request;
+use App\Repositories\Interfaces\RequestRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -12,21 +13,32 @@ use Illuminate\Validation\ValidationException;
 
 class RequestsController extends Controller
 {
-    private RequestRepository $requestRepository;
+    private RequestRepositoryInterface $requestRepository;
 
-    public function __construct()
+    public function __construct(RequestRepositoryInterface $requestRepository)
     {
-        $this->requestRepository = new RequestRepository();
+        $this->requestRepository = $requestRepository;
     }
 
     /**
-     * Display a listing of the resource.
+     * Возвращает список заявок.
      *
+     * @param \Illuminate\Http\Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(\Illuminate\Http\Request $request): JsonResponse
     {
-        $result = $this->requestRepository->getAll();
+        $dto = new RequestFilterDto();
+        if (!is_null($request->date))
+        {
+            $dto->date = $request->date;
+        }
+        if (!is_null($request->status))
+        {
+            $dto->status = $request->status;
+        }
+
+        $result = $this->requestRepository->getAll($dto);
 
         return response()->json([
             'status' => 'ok',
@@ -35,7 +47,7 @@ class RequestsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Создает новую заявку.
      *
      * @param \Illuminate\Http\Request $request
      * @return JsonResponse
@@ -80,23 +92,31 @@ class RequestsController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Возвращает заявку по id.
      *
      * @param int $id
      * @return JsonResponse
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->requestRepository->getById($id);
+        $requestForm = $this->requestRepository->getById($id);
+
+        if (is_null($requestForm))
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Заявка с id '.$id.' не найдена'
+            ]);
+        }
 
         return response()->json([
             'status' => 'ok',
-            'model' => $result
+            'model' => $requestForm
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновляет заявку.
      *
      * @param int $id
      * @param \Illuminate\Http\Request $request
@@ -120,6 +140,14 @@ class RequestsController extends Controller
         $data = $validator->validated();
 
         $requestForm = $this->requestRepository->getById($id);
+
+        if (is_null($requestForm))
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Заявка с id '.$id.' не найдена'
+            ]);
+        }
 
         if ($requestForm->status == 'Resolved')
         {
@@ -148,7 +176,7 @@ class RequestsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Удаляет заявку.
      *
      * @param int $id
      * @return JsonResponse
