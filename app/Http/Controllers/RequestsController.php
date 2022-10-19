@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\RequestFromRepository;
+use App\Mail\RequestMail;
 use App\Models\RequestForm as RequestForm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RequestsController extends Controller
@@ -132,6 +134,7 @@ class RequestsController extends Controller
 
         if ($requestForm->save())
         {
+            Mail::to($requestForm->email)->send(new RequestMail($requestForm));
             return response()->json([
                 'status' => 'ok',
                 'id' => $requestForm->id
@@ -153,6 +156,14 @@ class RequestsController extends Controller
     public function delete(int $id): JsonResponse
     {
         $requestForm = $this->requestFormRepository->getById($id);
+
+        if (is_null($requestForm))
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Заявка с id '.$id.' не найдена'
+            ]);
+        }
 
         $requestForm->delete();
 
