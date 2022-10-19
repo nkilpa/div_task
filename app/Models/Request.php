@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class RequestForm
+ * Class Request
  * @package App\Models
  *
  * @property int $id
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property DateTime $updated_at
  * @property DateTime $deleted_at
  */
-class RequestForm extends Model
+class Request extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -33,12 +33,4 @@ class RequestForm extends Model
         'message',
         'comment'
     ];
-
-    protected function attributes()
-    {
-        return [
-            'name' => 'Name',
-            ''
-        ];
-    }
 }

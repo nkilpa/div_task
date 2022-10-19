@@ -2,11 +2,9 @@
 
 namespace App\Mail;
 
-use App\Models\RequestForm;
+use App\Models\Request;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -15,7 +13,7 @@ class RequestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private RequestForm $request;
+    private Request $request;
 
     /**
      * Create a new message instance.

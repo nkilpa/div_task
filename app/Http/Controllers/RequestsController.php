@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Repositories\RequestFromRepository;
+use App\Http\Repositories\RequestRepository;
 use App\Mail\RequestMail;
-use App\Models\RequestForm as RequestForm;
+use App\Models\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class RequestsController extends Controller
 {
-    private RequestFromRepository $requestFormRepository;
+    private RequestRepository $requestRepository;
 
     public function __construct()
     {
-        $this->requestFormRepository = new RequestFromRepository();
+        $this->requestRepository = new RequestRepository();
     }
 
     /**
@@ -26,7 +26,7 @@ class RequestsController extends Controller
      */
     public function index(): JsonResponse
     {
-        $result = $this->requestFormRepository->getAll();
+        $result = $this->requestRepository->getAll();
 
         return response()->json([
             'status' => 'ok',
@@ -37,11 +37,11 @@ class RequestsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function create(Request $request): JsonResponse
+    public function create(\Illuminate\Http\Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
@@ -59,7 +59,7 @@ class RequestsController extends Controller
 
         $data = $validator->validated();
 
-        $requestForm = new RequestForm();
+        $requestForm = new Request();
         $requestForm->name = $data['name'];
         $requestForm->email = $data['email'];
         $requestForm->message = $data['message'];
@@ -87,7 +87,7 @@ class RequestsController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $result = $this->requestFormRepository->getById($id);
+        $result = $this->requestRepository->getById($id);
 
         return response()->json([
             'status' => 'ok',
@@ -99,11 +99,11 @@ class RequestsController extends Controller
      * Update the specified resource in storage.
      *
      * @param int $id
-     * @param Request $request
+     * @param \Illuminate\Http\Request $request
      * @return JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    public function update(int $id, Request $request): JsonResponse
+    public function update(int $id, \Illuminate\Http\Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'comment' => 'required'
@@ -119,7 +119,7 @@ class RequestsController extends Controller
 
         $data = $validator->validated();
 
-        $requestForm = $this->requestFormRepository->getById($id);
+        $requestForm = $this->requestRepository->getById($id);
 
         if ($requestForm->status == 'Resolved')
         {
@@ -155,7 +155,7 @@ class RequestsController extends Controller
      */
     public function delete(int $id): JsonResponse
     {
-        $requestForm = $this->requestFormRepository->getById($id);
+        $requestForm = $this->requestRepository->getById($id);
 
         if (is_null($requestForm))
         {

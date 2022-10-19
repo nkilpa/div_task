@@ -2,18 +2,18 @@
 
 namespace App\Http\Repositories;
 
-use App\Models\RequestForm;
+use App\Models\Request;
 use Illuminate\Database\Eloquent\Collection;
 
-class RequestFromRepository
+class RequestRepository
 {
     public function getAll(): Collection
     {
-        return RequestForm::query()->get();
+        return Request::query()->get();
     }
 
     public function getById(int $id)
     {
-        return RequestForm::query()->where('id', $id)->first();
+        return Request::query()->where('id', $id)->first();
     }
 }
