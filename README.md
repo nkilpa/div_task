@@ -1,4 +1,8 @@
-<h1 align="center">Тестовое задание</h1>
+##<h1 align="center">Тестовое задание</h1>
+В проекте реализованы функции получения списка всех заявок, получение заявки по id, 
+создания новой заявки, ответ на заявку через редактирование по id и удаление заявки по id.
+Файл с запросами для Postman находится в корне проекта.
+Название файла: **_Div Test Task.postman_collection.json_**
 <hr>
 
 ##API Endpoints
@@ -7,11 +11,6 @@
 - POST /api/requests/create - создание новой заявки
 - POST /api/requests/update - изменение заявки по id, прием ответа на заявку
 - DELETE /api/requests/delete - удаление заявки по id
-<hr>
-
-##Файл с запросами для Postman
-Файл с запросами для Postman находится в корне проекта.
-Название: **_Div Test Task.postman_collection.json_**
 <hr>
 
 ##Отправка E-mail
