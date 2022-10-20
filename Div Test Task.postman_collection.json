@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "6838c918-92ea-4584-9d8d-609e13dbbd2d",
+		"name": "Div Test Task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19223778"
+	},
+	"item": [
+		{
+			"name": "requests",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host_api}}/requests/index",
+							"host": [
+								"{{host_api}}"
+							],
+							"path": [
+								"requests",
+								"index"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2022-10-18",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Active",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Возвращает полный список заявок\n\nНеобязательные поля для фильтрации:\n\n- date\n- status"
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host_api}}/requests/show/1",
+							"host": [
+								"{{host_api}}"
+							],
+							"path": [
+								"requests",
+								"show",
+								"1"
+							]
+						},
+						"description": "Возвращает конкретную заявку по id"
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "example",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "example@test.ru",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "Hello world",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host_api}}/requests/create",
+							"host": [
+								"{{host_api}}"
+							],
+							"path": [
+								"requests",
+								"create"
+							]
+						},
+						"description": "Создание новой заявки. Автоматически проставляется статус \"Active\" для новой заявки\n\nОбязательные поля:\n\n- name\n- email\n- message"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "comment",
+									"value": "Hello",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host_api}}/requests/update/1",
+							"host": [
+								"{{host_api}}"
+							],
+							"path": [
+								"requests",
+								"update",
+								"1"
+							]
+						},
+						"description": "Прием ответа на заявку. Автоматически проставляется статус \"Resolved\".\n\nОбязательные поля:\n\n- comment"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host_api}}/requests/delete/1",
+							"host": [
+								"{{host_api}}"
+							],
+							"path": [
+								"requests",
+								"delete",
+								"1"
+							]
+						},
+						"description": "Удаление заявки по id"
+					},
+					"response": []
+				}
+			],
+			"description": "Документация по запросам на заявки"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host_api",
+			"value": "localhost:8080/api",
+			"type": "string"
+		}
+	]
+}
